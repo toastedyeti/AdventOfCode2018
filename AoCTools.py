@@ -22,3 +22,4 @@ class TOOLS(object):
             content = filein.readlines()
             puzzleOutput = [x.strip() for x in content]
         return puzzleOutput
+
