@@ -1,3 +1,9 @@
+"""
+Stuff Learned:
+- Combined Aa, aA,...,Zz, zZ
+- re.search(combined, i): was going down a recursive path & though pattern matching would be the while control
+"""
+
 import AoCTools as tools
 import string
 import re
@@ -36,6 +42,7 @@ def part1(puzzleInput):
             puzzleInput = puzzleInput[:i] + puzzleInput[i+2:]
             if i>= len(puzzleInput) - 1:
                 puzzleInput = ' ' + puzzleInput
+                print(puzzleInput)
     return(len(puzzleInput.strip()))
 
 print(part1(pI))
