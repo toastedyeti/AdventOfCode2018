@@ -2,6 +2,11 @@
 Stuff Learned:
 - Combined Aa, aA,...,Zz, zZ
 - re.search(combined, i): was going down a recursive path & though pattern matching would be the while control
+- dict.fromkeys(string.ascii_lowercase, 0)
+- set(string.ascii_lower) A set is an unordered collection with no duplicate elements
+- While x.replace() needs to be x = x.replace() !!!
+- can string .replace().replace to same string
+- slow it down and write the algorithm in comments first
 """
 
 import AoCTools as tools
@@ -42,8 +47,22 @@ def part1(puzzleInput):
             puzzleInput = puzzleInput[:i] + puzzleInput[i+2:]
             if i>= len(puzzleInput) - 1:
                 puzzleInput = ' ' + puzzleInput
-                print(puzzleInput)
     return(len(puzzleInput.strip()))
 
+def part2(puzzleInput):
+    # For each letter in the alphabet
+    alpha = string.ascii_lowercase
+    ad = {}
+    for i in alpha:
+        pt = puzzleInput
+        # Replace both upper & lower in the puzzle input
+        pt = pt.replace(i,'').replace(i.upper(),'')
+        # Run part1, record both letter and outcome
+        ad[i] = part1(pt)
+    answer = min(ad, key=ad.get)
+    return answer, ad[answer]
+
+
 print(part1(pI))
+print(part2(pI))
 
