@@ -1,12 +1,21 @@
 import AoCTools as tools
 import string
-
-tool = tools.TOOLS()
+import re
 
 test = "dabAcCaCBAcCcaDA"
-pI = tool.openInput('d5.txt')
-pI1 = [l for l in pI[0]]
-pI2 = str(pI[0])
+pI = ''
+with open('d5.txt') as f:
+    pI = f.readline().strip()
+
+def pairGen():
+    uC = string.ascii_uppercase
+    lC = string.ascii_lowercase
+    pairs = []
+    for i in range(len(lC)):
+        pairs.append(uC[i] + lC[i])
+        pairs.append(lC[i] + uC[i])
+    combined = "("+")|(".join(pairs)+")"
+    return combined
 
 def case(l1, l2):
     if l1.islower() == l2.islower() or l1.isupper() == l2.isupper():
@@ -20,17 +29,14 @@ def areSame(l1, l2):
     else:
         return False 
 
-def part1(pI):
-    cL = 0  # Current Letter
-    nL = 0  # Next Letter
+def part1(puzzleInput):
+    for i in range(len(puzzleInput) -2, -1, -1):
+        cl, nl = puzzleInput[i], puzzleInput[i+1]
+        if not case(cl,nl) and areSame(cl, nl):
+            puzzleInput = puzzleInput[:i] + puzzleInput[i+2:]
+            if i>= len(puzzleInput) - 1:
+                puzzleInput = ' ' + puzzleInput
+    return(len(puzzleInput.strip()))
 
-    for l in range(len(pI)-1):
-        cL = pI[l]
-        nL = pI[l+1]
-        newStr = ''
-        if areSame(cL, nL) and not case(cL, nL):
-            i = pI.index(cL)
-            j = pI.index(nL)
-            newStr = pI[:i] + pI[j+1:]
-            return part1(newStr)
-part1(test)
+print(part1(pI))
+
