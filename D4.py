@@ -19,7 +19,6 @@ def part1(puzzleInput):
     currentGuard = ''
     lastDTG = None
     currentDTG = datetime.datetime.now()
-    #datetimeFormat = '%Y-%m-%d %H:%M:%S.%f'
     
     for i in puzzleInput: #read and strip input
         #Guard
@@ -49,12 +48,17 @@ def part1(puzzleInput):
             if i[5] not in guardSleep:
                 guardSleep[i[5]] = 0
 
-    for g in guardTracker:  #datetime.datetime(year, month, date, hour, minute, second)
-        print(g)
-        lastDTG = currentDTG
+    for g in guardTracker:  
+        #datetime.datetime(year, month, date, hour, minute, second)
         currentDTG = datetime.datetime(int(g[0]), int(g[1]), int(g[2]), int(g[3]), int(g[4]))
-        q = (currentDTG-lastDTG).seconds
-        print(q, "?")
+        if '#' in g[5]:
+            currentGuard = g[5]
+        else:
+            if g[5] == 'a':
+                pass
+            elif g[5] =='s'
+            
+        lastDTG = currentDTG
 
 
 part1(puzzleInput)
