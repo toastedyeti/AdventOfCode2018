@@ -3,7 +3,8 @@ Stuff Learned:
 - Combined Aa, aA,...,Zz, zZ
 - re.search(combined, i): was going down a recursive path & though pattern matching would be the while control
 - dict.fromkeys(string.ascii_lowercase, 0)
-- set(string.ascii_lower) A set is an unordered collection with no duplicate elements
+- set(string.ascii_lower) 
+- A set is an unordered collection with no duplicate elements
 - While x.replace() needs to be x = x.replace() !!!
 - can string .replace().replace to same string
 - slow it down and write the algorithm in comments first
