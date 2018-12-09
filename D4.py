@@ -4,29 +4,44 @@ Stuff Learned
     - #s = sorted(s, key = lambda x: (x[1], x[2]))
     - #s = sorted(s, key = operator.itemgetter(1, 2))
 '''
-
-import AoCTools as tools
+from collections import defaultdict
 import re
 import datetime
-import operator
-tool = tools.TOOLS()
 
-puzzleInput = tool.openPuzzleInputTXT('d4s.txt')
+class guard(object):
+    #min_ctr = {str(i):0 for i in range(60)}
+    min_ctr = defaultdict(lambda: 0)
 
-class guard():
     def __init__(self, id):
         self.id = id
-        self.sleepTime = 0
+        self.sleep_stat = "a"
+
+    def update_min(self, minute):
+        minute = str(minute)
+        self.min_ctr[minute] += 1
     
+    def set_status(self, status):
+        self.status = status
+    
+    def get_status(self):
+        return self.status
 
-def part1(puzzleInput):
-    guardTracker =[]
-    guardSleep = {}
-    currentGuard = ''
-    lastDTG = ''
+    def getID(self):
+        return self.id
+    
+    def getMaxMinutes(self):
+        return max(zip(self.min_ctr.values(), self.min_ctr.keys()))
 
-# read and strip input
-    for i in puzzleInput:
+def openInput(fname):
+    # Read, Process, Strip, Sort Input
+    p_out = []
+    obs = []
+    with open(fname) as f:
+        content = f.readlines()
+        p_out = [x.strip() for x in content]
+    f.close()
+
+    for i in p_out:
         #Guard
         if re.findall(r"""\#\d+""",i):
             guard = re.findall(r"""\#\d+""",i)
@@ -34,7 +49,7 @@ def part1(puzzleInput):
             guard = ""
         #Shift
         if re.findall(r"""(begins)""", i):
-            shift = shift = re.findall(r"""(begins)""", i)
+            shift = re.findall(r"""(begins)""", i)
         else:
             shift = ""
         #Sleep Status
@@ -46,34 +61,57 @@ def part1(puzzleInput):
             sleepStatus = ""
         date = re.findall(r"""\d+\-\d+\-\d+""",i)[0].split('-')
         time = re.findall(r"""\d+\:\d+""",i)[0].split(':')
-        guardData = date + time + list(guard) + list(sleepStatus)
-        guardTracker.append(guardData)
+        obs_ = date + time + list(guard) + list(sleepStatus)
+        obs.append(obs_)
+    
+    return obs
 
-# create guard dictionary to store sleep times
-    for i in guardTracker: #Create dictionary with guards
-        if "#" in i[5]:
-            if i[5] not in guardSleep:
-                guardSleep[i[5]] = 0
-        # Register First time
-        if guardTracker.index(i) == 0:
-            lastDTG = datetime.datetime(int(i[0]), int(i[1]), int(i[2]), int(i[3]), int(i[4]))
+def parse_dtg(l):
+    y, m, d, h, mi = l[0:5]
+    if re.match(r'0\d', mi):
+        mi = int(mi[1])
+    if re.match(r'00', h):
+        h = int(h[1])
+    
+    return y,m,d,h,mi
 
-    for g in guardTracker:
-        '''
-            #datetime.datetime(year, month, date, hour, minute, second)
-            0      1    2     3    4     5  
-            y      m    d     h    m     guard / s / a
-        '''
-        currentDTG = datetime.datetime(int(g[0]), int(g[1]), int(g[2]), int(g[3]), int(g[4]))
-        if '#' in g[5]:
-            currentGuard = g[5]
-        elif g[5] == 's':
-            outTime = abs(currentDTG.minute - lastDTG.minute)
-            guardSleep[currentGuard] += outTime
-        lastDTG = currentDTG
+def part1(observations):
+    obs = observations
+    guards = {i[5]:guard(i[5]) for i in obs}
+    c_g = obs[0][5] #should be true if pre-sorted
+    p_time = None
+    p_date = None
 
-    print(guardSleep)
+    for i in obs:
+        timeDiff = 0
+        # Set previous time as current if no val avail
+        if p_time == None and p_date == None:
+            y,m,d,h,mi = parse_dtg(i)
+            p_date = datetime.date(int(y),int(m),int(d))
+            p_time = datetime.time(int(h),int(mi))
+        
+        #Set Current Time Variables
+        y,m,d,h,mi = parse_dtg(i)
+        c_date = datetime.date(int(y),int(m),int(d))
+        c_time = datetime.time(int(h),int(m))
 
-    # track the minute the guard is most sleepy ... probably need a different tac 
-part1(puzzleInput)
+        # Which guard is on duty? Set status to awake
+        if guards[i[5]]:
+            c_g = guards[i[5]].getID()
+            guards[c_g].set_status('a')
+        else: # If no change to guard, status to a / s
+            guards[c_g].set_status(i[5])
+            if guards[c_g].get_status() == "s":
+                guards[c_g].update_min(c_time.minute)
 
+        if c_date != p_date:
+            if c_date.day > p_date.day:
+                h_delta = 60 - p_time.minute
+                min_delta = h_delta + c_time.minute
+            timeDiff = min_delta
+
+        #####
+        p_time = c_time
+        p_date = c_date
+
+part1(openInput('d4s.txt'))
