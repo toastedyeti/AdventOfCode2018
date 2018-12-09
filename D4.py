@@ -15,6 +15,7 @@ class guard(object):
     def __init__(self, id):
         self.id = id
         self.sleep_stat = "a"
+        self.sleep_tot = 0
 
     def update_min(self, minute):
         minute = str(minute)
@@ -31,6 +32,12 @@ class guard(object):
     
     def getMaxMinutes(self):
         return max(zip(self.min_ctr.values(), self.min_ctr.keys()))
+
+    def add_sleep(self, mi):
+        self.sleep_tot += mi
+    
+    def get_tot_sleep(self):
+        return self.sleep_tot
 
 def openInput(fname):
     # Read, Process, Strip, Sort Input
@@ -72,12 +79,15 @@ def parse_dtg(l):
         mi = int(mi[1])
     if re.match(r'00', h):
         h = int(h[1])
-    
     return y,m,d,h,mi
 
 def part1(observations):
     obs = observations
-    guards = {i[5]:guard(i[5]) for i in obs}
+    guards = {} 
+    for i in obs:
+        if '#' in i[5]:
+            guards[i[5]] = guard(i[5])
+    #guards = {i[5]:guard(i[5]) if '#' in i[5] for i in obs}
     c_g = obs[0][5] #should be true if pre-sorted
     p_time = None
     p_date = None
@@ -93,10 +103,10 @@ def part1(observations):
         #Set Current Time Variables
         y,m,d,h,mi = parse_dtg(i)
         c_date = datetime.date(int(y),int(m),int(d))
-        c_time = datetime.time(int(h),int(m))
+        c_time = datetime.time(int(h),int(mi))
 
         # Which guard is on duty? Set status to awake
-        if guards[i[5]]:
+        if i[5] in guards:
             c_g = guards[i[5]].getID()
             guards[c_g].set_status('a')
         else: # If no change to guard, status to a / s
@@ -114,4 +124,6 @@ def part1(observations):
         p_time = c_time
         p_date = c_date
 
+    for i in guards:
+        print(guards[i].getID(), guards[i].min_ctr)
 part1(openInput('d4s.txt'))
