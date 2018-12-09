@@ -63,7 +63,6 @@ def part2(puzzleInput):
     answer = min(ad, key=ad.get)
     return answer, ad[answer]
 
-
 print(part1(pI))
 print(part2(pI))
 
