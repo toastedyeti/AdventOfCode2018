@@ -1,11 +1,18 @@
 '''
-- 
-
+STUFF LEARNED: 
+- I really wanted to try to solve this with numpy, but was not able to learn the basics in time
+- Trouble with finding the right "Frame" to view the code "ZAEZRLZG"
+    earlier solutions that appended coordinates to the pixel list were
+    abandoned bc of printing in the console
+            *********************   
+            - print("@", end="") 
+            ********************* 
+- This solution finds coordinates within boundary ranges ymin to ymax, then xmin to xmax 
+and prints an "@"
+- Probably too many sources to cite on boundary management tips, but github.com/klaa97 
+was the most clear and used the print("@", end="")
 '''
-
 import string
-import numpy as np
-import matplotlib.pyplot as plt
 import sys
 import re
 
@@ -60,7 +67,7 @@ def part1(in_f):
     for i in coords: 
         pts.append(PT(i[0],i[1],i[2],i[3]))
 
-    for s in range(11000):
+    for s in range(10105):
         limit =[]
         width = 100
         for i in pts:
@@ -69,10 +76,16 @@ def part1(in_f):
         miny = min([y.gety() for y in pts])
         maxx = max([x.getx() for x in pts])
         maxy = max([y.gety() for y in pts])
-        # if minx + width >= maxx and miny + width >= maxy:
-        #     for i in pts:
-        # if minx <= i.getx() <= maxx and miny <= i.gety() <= maxy:
-        #     if i.out() not in pixels:
-        #         pixels.append(i.out())
+        if minx + width >= maxx and miny + width >= maxy:
+            print(s)
+            pixels = [pt.out() for pt in pts]
+            for y in range(miny,maxy+1):
+                for x in range(minx,maxx+1):
+                    if [x,y] in pixels:
+                        print("@", end="")
+                    else:
+                        print(" ", end="")
+                print("")
+
 
 part1(openInput('d10.txt'))
