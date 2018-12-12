@@ -55,7 +55,7 @@ def openInput(fname, testing = False):
             maxy = max(y + i * vy for (x, y, vx, vy) in lines)
 
         print (i, maxx - minx + maxy - miny)
-    
+    print(len(lines))
     return lines
 
 def part1(in_f):
