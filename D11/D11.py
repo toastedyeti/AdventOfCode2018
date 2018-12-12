@@ -56,7 +56,8 @@ def cellValue(x,y,c,s):
                     pass
     return outsum
 
-def power(x, y, sn):
+def power(x, y, sn): 
+    #u/toastedstapler
     id = x + 10
     level = id * y
     level += sn
@@ -92,7 +93,6 @@ def part2(serialNum):
                     coordCapture = [x,y]
                     gridSize = size
     return  coordCapture, gridSize
-
 
 print(part1(3463, 300, 3))
 print(part2(3463))
