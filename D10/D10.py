@@ -11,6 +11,9 @@ STUFF LEARNED:
 and prints an "@"
 - Probably too many sources to cite on boundary management tips, but github.com/klaa97 
 was the most clear and used the print("@", end="")
+
+NEXT:
+- Plot this in Numpy... animate if possible?
 '''
 import string
 import sys
@@ -86,6 +89,5 @@ def part1(in_f):
                     else:
                         print(" ", end="")
                 print("")
-
 
 part1(openInput('d10.txt'))
