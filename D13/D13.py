@@ -62,7 +62,7 @@ def setup(fname):
 def run_sim():
     # Reference Dictionaries
     orient_in = {'^':(0,-1), 'v':(0,1), '<':(-1,0), '>':(1,0)}
-    orient_out = {0:"^", 1: ">", 2:"v", 3:"<"}
+    #orient_out = {0:"^", 1: ">", 2:"v", 3:"<"}
     #
     ticker = 0
     carts, tracks = setup(fname)
@@ -115,7 +115,6 @@ def run_sim():
                     #Straight
                     pass
                 c.inter_ctr += 1
-
             elif tracks[cart_nxt] =='-' or tracks[cart_nxt] == "|":
                 orient_nxt = current_orient
             

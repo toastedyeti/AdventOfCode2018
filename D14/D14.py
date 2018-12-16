@@ -17,7 +17,6 @@ def part1(recipie):
             recipies.append(int(digit))
         e1 = (e1 + 1 + recipies[e1]) % len(recipies)
         e2 = (e2 + 1 + recipies[e2]) % len(recipies)
-
     out = (''.join(str(num) for num in recipies)[puzzin:puzzin+10])
     print(out)
 
