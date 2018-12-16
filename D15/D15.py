@@ -18,14 +18,27 @@ class combatant:
     def alive(self):
         return self.hp > 0
 
-    def recon(self, enemies):
+    def zones(self):
         cx = self.x
         cy = self.y
         zones = [(cx, cy+1), (cx+1, cy), (cx, cy-1), (cx-1,cy)]
-        for i in zones:
-            targets = [i for i in enemies if i.type != self.type and i.alive() == True]
-        return targets
-    
+        return tuple(zones)
+
+    def recon(self, enemies):
+        zones = self.zones()
+        targets = [c.beacon() for c in enemies if c.beacon() in zones and c.alive() is True]
+        if not targets:
+            return False
+        else:
+            return targets
+
+    def move(self, positions, enemies, friends):
+        zones = self.zones()
+        e_pos = [c.beacon() for c in enemies]
+        f_pos = [c.beacon() for c in friends]
+        free = [c for c in zones if positions[c] != "#" and c not in e_pos and c not in f_pos]
+        targets = self.recon(enemies)
+
     
 class goblin(combatant):
     type = "G"
@@ -58,14 +71,14 @@ def setup(fname):
                 battlefield.positions[(x,y)] = '.'
                 battlefield.elves.append(e)
                 uid += 1
+            else:
+                battlefield.positions[x,y] = '.'
     return battlefield
 
 def part1():
     battlefield = setup('d15.txt')
     for i in battlefield.elves:
-        print(i.id, i.recon(battlefield.goblins),"\n")
-    # print(battlefield.positions)
-    # print(battlefield.elves)
-    # print(battlefield.goblins)
+        i.move(battlefield.positions, battlefield.goblins, battlefield.elves)
+
 
 part1()
