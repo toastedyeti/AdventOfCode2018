@@ -7,6 +7,7 @@ Stuff Learned:
 
 #from collections import defaultdict
 #from typing import List, Tuple, Dict
+import collections
 import os
 import sys
 
@@ -36,6 +37,7 @@ class cart(object):
     def beacon(self):
         return (self.x, self.y)
 
+
 def setup(fname):
     with open(os.path.join(sys.path[0], fname), "r") as f:
         d13 = [l.strip() for l in f]
@@ -60,43 +62,48 @@ def setup(fname):
 def run_sim():
     # Reference Dictionaries
     orient_in = {'^':(0,-1), 'v':(0,1), '<':(-1,0), '>':(1,0)}
-    orient_out = {1:"^", 2: ">", 3:"v", 4:"<"}
+    orient_out = {0:"^", 1: ">", 2:"v", 3:"<"}
     #
     ticker = 0
     carts, tracks = setup(fname)
-    crashcoords = {}
+    crashlist = []
     collision = False
 
     while not collision:
-        #print(ticker)
-        crashc = []
         for c in carts:
             orient_nxt = c.orient()
             cur_x, cur_y = c.beacon()
             move_dir = orient_in[c.orient()] 
-            cart_nxt = (cur_x+move_dir[0], cur_y+ move_dir[1])
+            current_orient = c.orient()
+            # coordinates of next track piece
+            cart_nxt = (cur_x + move_dir[0], cur_y + move_dir[1])
+
+            # Cart moves out of bounds ?
             if cart_nxt not in tracks:
                 print(ticker)
+                print(carts.index(c))
+                print(c.beacon())
                 print(cart_nxt)
-            #print(tracks[cart_nxt] * 20)
+            
+            # Orient the cart
             if tracks[cart_nxt] == '\\':
-                if c.orient() == '>': #left to down
+                if current_orient == "^":
+                    orient_nxt = ">"
+                elif current_orient == ">":
                     orient_nxt = "v"
-                elif c.orient() == "<": #right to up
-                    orient_nxt = '^'
-                elif c.orient() == "^": #up to left
-                    orient_nxt = "<"
-                elif c.orient() == "v": #down to right
+                elif current_orient == "v":
                     orient_nxt = ">"
-            elif tracks[cart_nxt] == '/':
-                if c.orient() == '>': 
+                else:
                     orient_nxt = "^"
-                elif c.orient() == "<": 
-                    orient_nxt = 'v'
-                elif c.orient() == "^": 
+            elif tracks[cart_nxt] == '/':
+                if current_orient == '>': 
+                    orient_nxt = "^"
+                elif current_orient == "^": 
                     orient_nxt = ">"
-                elif c.orient() == "v": 
-                    orient_nxt = "<"                
+                elif current_orient == "v": 
+                    orient_nxt = "<"
+                else:
+                    orient_nxt = "v"
             elif tracks[cart_nxt] =='+':
                 if c.inter_ctr % 3 == 0:
                     #right
@@ -108,11 +115,19 @@ def run_sim():
                     #Straight
                     pass
                 c.inter_ctr += 1
+
+            elif tracks[cart_nxt] =='-' or tracks[cart_nxt] == "|":
+                orient_nxt = current_orient
+            
             c.update(cart_nxt[0], cart_nxt[1], orient_nxt)
-        ticker += 1
+            crashlist = [c.beacon for c in carts]
+            if [item for item, count in collections.Counter(crashlist).items() if count > 1]:
+                print([item for item, count in collections.Counter(a).items() if count > 1])
+        
+
         carts = sorted((c for c in carts), key=lambda x: x.beacon())
         ticker += 1
-    return cart_nxt
+    #return cart_nxt
 
 
 run_sim()
