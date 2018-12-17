@@ -3,6 +3,9 @@ Stuff Learned:
 - sorted((c for c in carts), key=lambda x: x.beacon())
 - enumerate continutes to be useful in mapping
 - os.path.join(sys.path[0], fname)
+
+NEXT: 
+- Complex numbers
 '''
 
 #from collections import defaultdict
