@@ -12,6 +12,7 @@ import sys, os
 from parse import parse
 import operator
 import datetime
+from collections import Counter
 from datetime import timedelta
 
 class guard(object):
@@ -48,6 +49,7 @@ class guard(object):
     def mostfreq(self):
         self.most_freq = max(self.minute, key = lambda x: self.minute.get(x))
         return self.most_freq
+
 
 def openInput(fname):
     # Read, Process, Strip, Sort Input
@@ -106,16 +108,17 @@ def part1():
     return guards
 
 def part2(g):
-    sleep = {}
+    s = []
     for i in g:
-        sleep[g[i].id] = [g[i].id, g[i].mostfreq(), (g[i].id * g[i].mostfreq())]
-
-    ss = [(k,v[2]) for k,v in sleep.items()]
-    for i in ss:
-        print(i)
+        print(g[i].id, max(g[i].minute.values()), g[i].id * max(g[i].minute.values()))
+        ids = g[i].id
+        maxmin = max(g[i].minute.values())
+        t = ids*maxmin
+        s.append([ids, maxmin, t])
+    print("*"*60)
+    print(max(s[1]))
 
 
 g = part1()
-
 part2(g)
 
