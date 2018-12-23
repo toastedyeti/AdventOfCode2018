@@ -21,6 +21,7 @@ class guard(object):
         self.id = id
         self.sleep = 0
         self.obs = []
+        self.minute_freq = []
         self.minute = {minute: 0 for minute in range(60)}
         self.most_freq = 0
 
@@ -42,14 +43,22 @@ class guard(object):
                     t1 = sleep_start
                     while t1 < dtg:
                         self.minute[t1.minute] += 1
+                        self.minute_freq.append(t1)
                         self.sleep += 1
                         t1 += timedelta(minutes=1)
                     t1 = None
 
     def mostfreq(self):
-        self.most_freq = max(self.minute, key = lambda x: self.minute.get(x))
-        return self.most_freq
-
+        s = []
+        r = None
+        g = None
+        for i in self.minute_freq:
+            s.append(i.minute)
+        r = Counter(s)
+        if len(r) > 0:
+            keymax = max(r.keys(), key=(lambda x: r[x]))
+            g = (self.id, keymax, r[keymax])
+        return g
 
 def openInput(fname):
     # Read, Process, Strip, Sort Input
@@ -110,15 +119,18 @@ def part1():
 def part2(g):
     s = []
     for i in g:
-        print(g[i].id, max(g[i].minute.values()), g[i].id * max(g[i].minute.values()))
-        ids = g[i].id
-        maxmin = max(g[i].minute.values())
-        t = ids*maxmin
-        s.append([ids, maxmin, t])
-    print("*"*60)
-    print(max(s[1]))
+        mf = g[i].mostfreq()
+        if type(mf) == tuple:
+            s.append(mf)
 
+    ret = (0,0,0)
+    for i in sorted(s, key=lambda s: s[2], reverse=True):
+        print(i)
+        if ret[2] < i[2]:
+            ret = i
+    
+    return ret, (ret[0]*ret[1])
 
 g = part1()
-part2(g)
+print(part2(g))
 
